@@ -13,21 +13,36 @@
 {% endif %}
 
 {% if alarms %}
+<br>
 <h4>Alarms:</h4>
-  <ul>
-      {% for a in alarms %}
-          <li>{{ a.alarmName }} :
-            <ul>
-              <li>Creator: {{ a.creator }}
-              {% if a.startTime %}
-                <li>Start time: {{ a.startTime }}</li>
-              {% endif %}
-                <li> End time: {{ a.endTime }}</li>
-            </ul> 
-          </li>
+<table class="table-content">
+    <thead>
+        <th>Name</th>
+        <th>Start Time</th>
+        <th>End Time</th>
+        <th>Creator</th>
+        <th>Action</th>
+    </thead>
+    <tbody>
+        {% for a in alarms %}
+          <tr>
+            <td>{{ a.alarmName }}</td>
+            {% if a.startTime %}
+              <td>{{ a.startTime }}</td>
+            {% else %}
+              <td>{{ none }}</td>
+            {% endif %}
+            <td>{{ a.endTime }}</td>
+            <td>{{ a.creator }}</td>
+            <td>
+                <a href="alarms/{{a.id}}/delete">Delete</a>
+            </td>
+          </tr>
       {% endfor %}
-  </ul>
+    </tbody>
+</table>
 {% else %}
     <p>There are no alarms set for this outlet.</p>
 {% endif %}
+<a href="alarms/new">Create an Alarm</a>
 {% endblock %}
