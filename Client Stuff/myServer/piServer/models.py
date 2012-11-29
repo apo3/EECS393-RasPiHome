@@ -30,7 +30,7 @@ class Alarm(models.Model):
     
 class Building(models.Model):
     buildingname = models.CharField(max_length=18)
-    owner = models.ForeignKey('UserProfile') #Foreign Key
+    owner = models.ForeignKey(User) #Foreign Key
     onlineState = models.BooleanField()
     
     def __unicode__(self):

@@ -8,19 +8,39 @@
 
 {% if outlets %}
 
-  Select a outlet to view more information:
-  <ul>
+  <h4>Outlets:</h4>
+  <table class="table-content">
+    <thead>
+      <th>Name</th>
+      <th>State</th>
+      <th>Actions</th>
+    </thead>
+    <tbody>
       {% for o in outlets %}
-          <li><a href="outlets/{{o.id}}" >{{ o.outletName }}</a> : 
-            {% if o.state %}
-              On
-            {% else %}
-              Off
-            {% endif %}
-          </li>
+          <tr>
+            <td><a href="outlets/{{o.id}}" >{{ o.outletName }}</a></td>
+            <td>
+              {% if o.state %}
+                On
+              {% else %}
+                Off
+              {% endif %}
+            </td>
+            <td>
+              {% if o.state %}
+                <a href="outlets/{{o.id}}/flip/0">Turn Off</a>
+              {% else %}
+                <a href="outlets/{{o.id}}/flip/1">Turn On</a>
+              {% endif %}
+              <a href="outlets/{{o.id}}/delete">Delete</a>
+            </td>
+          </tr>
       {% endfor %}
-  </ul>
+    </tbody>
+  </table>
 {% else %}
     <p>You do not own any buildings at this time.</p>
 {% endif %}
+<br/>
+<a href="outlets/new">Register an Outlet</a>
 {% endblock %}

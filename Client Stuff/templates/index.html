@@ -9,12 +9,21 @@
 {% if building_list %}
 
   Select a building to view more information:
-  <ul>
+  <table class="table-content">
       {% for b in building_list %}
-          <li><a href="buildings/{{b.id}}" >{{ b.buildingname }}</a></li>
+          <tr>
+            <td><a href="buildings/{{b.id}}" >{{ b.buildingname }}</a></td>
+            <td>
+              {% if b.onlineState %}
+                Online
+              {% else %}
+                Offline
+              {% endif %}
       {% endfor %}
-  </ul>
+  </table>
 {% else %}
     <p>You do not own any buildings at this time.</p>
 {% endif %}
+
+<a href="buildings/new">Add a Building</a>
 {% endblock %}
