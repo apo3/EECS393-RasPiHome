@@ -2,6 +2,10 @@
 
 {% block title %}{{building}}{% endblock %}
 
+{% block breadcrumbs %}
+&raquo; <a href="/piServer/buildings/{{building.id}}">{{building}}</a>
+{% endblock %}
+
 {% block content %}
 
 <h1>{{building}}</h1>

@@ -2,6 +2,12 @@
 
 {% block title %}Create an Alarm{% endblock %}
 
+{% block breadcrumbs %}
+&raquo; <a href="/piServer/buildings/{{building.id}}">{{building}}</a>
+&raquo; <a href="/piServer/buildings/{{building.id}}/outlets/{{outlet.id}}">{{outlet}}</a>
+&raquo; Create New Alarm
+{% endblock %}
+
 {% block content %}
 
 <h1>Create an Alarm</h1>

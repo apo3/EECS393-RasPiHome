@@ -127,16 +127,69 @@
       font-family: Verdana, Arial, sans-serif;
       word-wrap: break-word;
     }
+    .error {
+      color: #D62828;
+    }
+    .appName {
+      color: white;
+      font-size: 16pt;
+      font-weight: bold;
+      font-family: "courier";
+    }
+    .banner {
+      background-color: black;
+      padding: 10px;
+    }
+    .logout {
+      float: right;
+    }
+    .breadcrumbs {
+      padding: 10px;
+    }
+    .content {
+      padding: 10px
+    }
+    fieldset {  
+      float: left;
+      clear: left;
+      width: 100%;
+      margin: 0 0 1.5em 0;
+      padding: 0;
+    }
+    fieldset li {
+      float: left;
+      clear: left;
+      width: 100%;
+      padding-bottom: 1em;
+    }
+    label {
+      float: left;
+      width: 10em;
+      margin-right: 1em;
+    }
+    fieldset.submit {  
+      float: none;
+      width: auto;
+      border: 0 none #FFF;
+      padding-left: 12em;
+    }
     </style>
     <title>{% block title %}{% endblock %}</title>
     </head>
     <body>
         <div class="banner">
-            <a href="logout/">log out</a>
+          <div class="logout">
+              <a href="/piServer/logout/">log out</a>
+          </div>
+          <div class="appName">PiAutomation</div>
+        </div>
+        <div class="breadcrumbs">
+            <a href="/piServer/">Home</a>
+            {% block breadcrumbs %}{% endblock %}
         </div>
 
         <span class="pageHeading">{% block pageHeading %}{% endblock %}</span>
         
-        <div>{% block content %}{% endblock %}</div>
+        <div class="content">{% block content %}{% endblock %}</div>
     </body>
 </html>

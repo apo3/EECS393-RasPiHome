@@ -1,14 +1,16 @@
 from django.template import Context, loader, RequestContext
 from piServer.models import UserProfile, Building, Outlet, Alarm
+from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_list_or_404, render_to_response, get_object_or_404
 from django.core.urlresolvers import reverse
+from django.views.decorators.csrf import csrf_exempt
 
 def logout_view(request):
     logout(request)
-    return render_to_response('login.html')
+    return HttpResponseRedirect(reverse('django.contrib.auth.views.login', args=''))
 
 @login_required
 def index(request):
@@ -68,6 +70,7 @@ def newOutlet(request, building_id):
     return render_to_response('newOutlet.html', {'building': building},
                               context_instance=RequestContext(request))
 
+@login_required
 def createOutlet(request, building_id):
     building = get_object_or_404(Building, pk=building_id)
     name = request.POST['name']
@@ -78,6 +81,7 @@ def createOutlet(request, building_id):
     outlet.save()
     return HttpResponseRedirect(reverse('piServer.views.building', args=(building.id,)))
 
+@login_required
 def flipState(request, building_id, outlet_id, flip_state):
     building = get_object_or_404(Building, pk=building_id)
     outlet = get_object_or_404(Outlet, pk=outlet_id)
@@ -108,5 +112,49 @@ def createBuilding(request):
     building.save()
     return HttpResponseRedirect(reverse('piServer.views.index', args=()))
 
+@csrf_exempt
 def newAccount(request):
     return render_to_response('newAccount.html', {}, context_instance=RequestContext(request))
+
+@csrf_exempt
+def createAccount(request):
+    username = request.POST['name']
+    email = request.POST['email']
+    password = request.POST['password']
+    passwordconf = request.POST['password_conf']
+    squestion = request.POST['squestion']
+    sanswer = request.POST['sanswer']
+    username_error = ''
+    email_error = ''
+    password_error = ''
+    squestion_error = ''
+    sanswer_error = ''
+    
+    if username == '' or len(username) > 30:
+        username_error = "Username must be between 1 and 30 alphanumeric characters"
+    if len(email) < 5 or len(email) > 30:
+        email_error = "Email must be between 5 and 30 characters in form x@x.x"
+    if password == '' or passwordconf == '' or password != passwordconf:
+        password_error = "Check that you have a password and password confirmation is the same"
+    if squestion == '':
+        squestion_error = "You must provide a security question"
+    if sanswer == '':
+        sanswer_error = "You must provide a security answer"
+    
+    if len(username_error) > 0 or len(email_error) > 0 or len(password_error) > 0 or len(squestion_error) > 0 or len(sanswer_error) > 0:
+        return render_to_response('newAccount.html', {'username_error': username_error,
+                                                      'email_error': email_error,
+                                                      'password_error': password_error,
+                                                      'squestion_error': squestion_error,
+                                                      'sanswer_error': sanswer_error})
+    else:
+        user = User(username = username,
+                    email = email,
+                    password = password)
+        user.save()
+        user_profile = UserProfile(user = user,
+                                   sQuestion = int(squestion),
+                                   sAnswer = sanswer,
+                                   lastAddress = '127.0.0.0')
+        user_profile.save()
+        return render_to_response('index.html')
