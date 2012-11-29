@@ -4,20 +4,14 @@
 
 {% block content %}
 
-<h1>Create an Alarm</h1>
+<h1>Create an Outlet</h1>
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
 <form action="create/" method="post">
 {% csrf_token %}
-    <label for="name">Alarm Name</label>
+    <label for="name">Outlet Name</label>
     <input type="text" name="name" id="name" value="" /><br />
-    
-    <label for="startTime">Start Time</label>
-    <input type="dateTime" name="starttime" id="starttime" value="" /><br />
-    
-    <label for="startTime">End Time</label>
-    <input type="dateTime" name="endtime" id="endtime" value="" /><br />
     
     <input type="submit" value="Create" />
 </form>
