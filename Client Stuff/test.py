@@ -16,6 +16,7 @@ building = query.execute('SELECT * FROM piServer_building WHERE id = %s' % bID)
 data = query.fetchall()
 print "Building: %s" % data
 #users = query.execute('SELECT * FROM piServer_userprofile WHERE user = 1')
-query.execute('PRAGMa table_info(piServer_userprofile)')
+query.execute('PRAGMA table_info(piServer_userprofile)')
 data = query.fetchall()
 print "Users: %s" % data
+

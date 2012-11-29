@@ -1,6 +1,6 @@
 
 from datetime import datetime
-#import Logger
+import Logger
 import sys
 import imp
 import sqlite3
@@ -17,7 +17,7 @@ buildings = query.execute('SELECT * FROM piServer_building WHERE id = %s' % bID)
 for building in buildings:
         owner = building[2]
         print ("YO I AM PRINT THE OWNER I THINK %s" ,owner)
-user = query.execute('SELECT * FROM piServer_userprofile WHERE user_id = %s' % owner)
+users = query.execute('SELECT * FROM piServer_userprofile WHERE user_id = %s' % owner)
 def flipState(oID):
 	outlet = query.execute('SELECT * FROM piServer_outlet WHERE id = %s' % oID)
 	outletNewState = outlet[0].state
@@ -33,7 +33,7 @@ def checkAlarms():
         alarms = query.execute('SELECT * FROM piServer_alarm WHERE id = %s' % bID)
 	for alarm in alarms:
                 startTime = alarm[5]
-                print startTime
+                print "Checked an Alarm"
 		if startTime == None:
 			checkTimer(alarm)
 		else:
@@ -44,10 +44,10 @@ def checkTimer(timer):
 		#logTimer(timer.pk)
 		#timer.delete()
 def checkAlarm(alarm):
-        print alarm[6]
+        #print alarm[6]
         now = datetime.now()
         time = alarm[6]
-        print now
+        #print now
 	if now >= datetime.strptime(time, '%Y-%m-%d %H:%M:%S'):
                 oID = alarm[3]
 		outlets = query.exectue('SELECT * FROM piServer_outlet WHERE id = ?',oID)
@@ -55,13 +55,16 @@ def checkAlarm(alarm):
                         state = outlet[3]
                         if state is not alarm[7]:
                                 flipState(oID)
-			#logAlarm(alarm.pk, true)
+                                logAlarm(alarm[0], true)
                         else:
-			#logAlarm(alarm.pk, false)
+                                logAlarm(alarm[0], false)
 		#alarm.delete()
-#	def killServer():
-#               buildings = query.execute('SELECT * FROM piServer_building WHERE id = ?',bID)
-#               for building in buildings:
-#                       if building["onlineState"] is False:
-                                #log(user.lastAddress, user.username, "The building associated with these alarms is no longer online... Shutting down", 0)
-                                sys.exit("The building associated with these alarms is no longer online... Shutting down")
+def killServer():
+        buildings = query.execute('SELECT * FROM piServer_building WHERE id = ?',bID)
+        for building in buildings:
+                if building["onlineState"] is False:
+                        users2 = ('SELECT * FROM piServer_building WHERE user_id = ?',owner)
+                        for user2 in users2:
+                                lastAddress = user2[4]
+                        log(lastAddress, username, "The building associated with these alarms is no longer online... Shutting down", 0)
+                        sys.exit("The building associated with these alarms is no longer online... Shutting down")
