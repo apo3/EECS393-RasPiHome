@@ -1,16 +1,21 @@
 {% extends "base.html" %}
 
-{% block title %}Create an Alarm{% endblock %}
+{% block title %}Register an Outlet{% endblock %}
+
+{% block breadcrumbs %}
+&raquo; <a href="/piServer/buildings/{{building.id}}">{{building}}</a>
+&raquo; Register an Outlet
+{% endblock %}
 
 {% block content %}
 
-<h1>Create an Outlet</h1>
+<h1>Register an Outlet</h1>
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
 <form action="create/" method="post">
 {% csrf_token %}
-    <label for="name">Outlet Name</label>
+    <label for="name">Outlet Name:</label>
     <input type="text" name="name" id="name" value="" /><br />
     
     <input type="submit" value="Create" />

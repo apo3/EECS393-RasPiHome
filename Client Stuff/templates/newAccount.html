@@ -2,25 +2,47 @@
 
 {% block title %}Create an Account{% endblock %}
 
+{% block breadcrumbs %}
+&raquo; Create an Account
+{% endblock %}
+
 {% block content %}
 
 <h1>Create an Account</h1>
 
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+<div class="error">
+{% if username_error != '' %}<p><strong>{{ username_error }}</strong></p>{% endif %}
+{% if email_error != '' %}<p><strong>{{ email_error }}</strong></p>{% endif %}
+{% if password_error != '' %}<p><strong>{{ password_error }}</strong></p>{% endif %}
+{% if squestion_error != '' %}<p><strong>{{ squestion_error }}</strong></p>{% endif %}
+{% if sanswer_error != '' %}<p><strong>{{ sanswer_error }}</strong></p>{% endif %}
+</div>
 
-<form action="create/" method="post">
-{% csrf_token %}
-    <label for="name">User Name</label>
+<form action="/piServer/account/new/create/" method="post">
+    <label for="name">User Name:</label>
     <input type="text" name="name" id="name" value="" /><br />
     
-    <label for="email">Email</label>
+    <label for="email">Email:</label>
     <input type="text" name="email" id="email" value="" /><br />
     
-    <label for="password">Password</label>
-    <input type="text" name="password" id="password" value="" /><br />
+    <label for="password">Password:</label>
+    <input type="password" name="password" id="password" value="" /><br />
     
-    <label for="password_conf">Password Confirmation</label>
-    <input type="text" name="password_conf" id="password_conf" value="" /><br />
+    <label for="password_conf">Password Confirmation:</label>
+    <input type="password" name="password_conf" id="password_conf" value="" /><br />
+    
+    <label for="squestion">Security Question:</label>
+    <select name="squestion" id="password_conf">
+        <option value="">--- select ---</option>
+        <option value="1">What is your mother's maiden name?</option>
+        <option value="2">What city were you born in?</option>
+        <option value="3">What is your high school mascot?</option>
+        <option value="4">What is the name of your first pet?</option>
+        <option value="5">In what city was your high school?</option>
+    </select><br />
+    
+    <label for="sanswer">Security Answer:</label>
+    <input type="text" name="sanswer" id="sanswer" /><br />
     
     <input type="submit" value="Create" />
 </form>

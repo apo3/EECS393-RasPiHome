@@ -2,6 +2,10 @@
 
 {% block title %}Add a Building{% endblock %}
 
+{% block breadcrumbs %}
+&raquo; Add a Building
+{% endblock %}
+
 {% block content %}
 
 <h1>Add a Building</h1>
@@ -10,7 +14,7 @@
 
 <form action="create/" method="post">
 {% csrf_token %}
-    <label for="name">Building Name</label>
+    <label for="name">Building Name:</label>
     <input type="text" name="name" id="name" value="" /><br />
     
     <input type="submit" value="Create" />

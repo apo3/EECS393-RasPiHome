@@ -2,6 +2,11 @@
 
 {% block title %}{{outlet}}{% endblock %}
 
+{% block breadcrumbs %}
+&raquo; <a href="/piServer/buildings/{{building.id}}">{{building}}</a>
+&raquo; <a href="/piServer/buildings/{{building.id}}/outlets/{{outlet.id}}">{{outlet}}</a>
+{% endblock %}
+
 {% block content %}
 
 <h1>{{outlet}}</h1>
@@ -11,10 +16,40 @@
 {% else %}
   Off
 {% endif %}
+<br />
 
-{% if alarms %}
-<br>
+<br />
+<div class="content-div">
 <h4>Alarms:</h4>
+<a href="alarms/new">Create an Alarm</a>
+<table class="table-content">
+    <thead>
+        <th>Name</th>
+        <th>Alarm Time</th>
+        <th>Creator</th>
+        <th>Action</th>
+    </thead>
+    <tbody>
+    {% if alarms %}
+        {% for a in alarms %}
+            <tr bgcolor="#D1E68D">
+              <td>{{ a.alarmName }}</td>
+              <td>{{ a.endTime }}</td>
+              <td>{{ a.creator }}</td>
+              <td>
+                  <a href="alarms/{{a.id}}/delete">Delete</a>
+              </td>
+            </tr>
+        {% endfor %}
+    {% else %}
+        <tr bgcolor="#D1E68D">
+            <td colspan='4'><center>No alarms</center></td>
+        </tr>
+    {% endif %}
+    </tbody>
+</table>
+<h4>Timers:</h4>
+<a href="timers/new">Create a Timer</a>
 <table class="table-content">
     <thead>
         <th>Name</th>
@@ -24,25 +59,24 @@
         <th>Action</th>
     </thead>
     <tbody>
-        {% for a in alarms %}
-          <tr>
-            <td>{{ a.alarmName }}</td>
-            {% if a.startTime %}
-              <td>{{ a.startTime }}</td>
-            {% else %}
-              <td>{{ none }}</td>
-            {% endif %}
-            <td>{{ a.endTime }}</td>
-            <td>{{ a.creator }}</td>
-            <td>
-                <a href="alarms/{{a.id}}/delete">Delete</a>
-            </td>
-          </tr>
-      {% endfor %}
+    {% if timers %}
+        {% for t in timers %}
+            <tr bgcolor="#D1E68D">
+              <td>{{ t.alarmName }}</td>
+              <td>{{ t.startTime }}</td>
+              <td>{{ t.endTime }}</td>
+              <td>{{ t.creator }}</td>
+              <td>
+                  <a href="alarms/{{t.id}}/delete">Delete</a>
+              </td>
+            </tr>
+        {% endfor %}
+    {% else %}
+        <tr bgcolor="#D1E68D">
+            <td colspan='4'><center>No timers</center></td>
+        </tr>
+    {% endif %}
     </tbody>
 </table>
-{% else %}
-    <p>There are no alarms set for this outlet.</p>
-{% endif %}
-<a href="alarms/new">Create an Alarm</a>
+</div>
 {% endblock %}

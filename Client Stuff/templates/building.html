@@ -2,13 +2,17 @@
 
 {% block title %}{{building}}{% endblock %}
 
+{% block breadcrumbs %}
+&raquo; <a href="/piServer/buildings/{{building.id}}">{{building}}</a>
+{% endblock %}
+
 {% block content %}
 
 <h1>{{building}}</h1>
 
-{% if outlets %}
-
+<div class="content-div">
   <h4>Outlets:</h4>
+  <a href="outlets/new">Register an Outlet</a>
   <table class="table-content">
     <thead>
       <th>Name</th>
@@ -16,31 +20,34 @@
       <th>Actions</th>
     </thead>
     <tbody>
+    {% if outlets %}
       {% for o in outlets %}
-          <tr>
+        {% if o.state %}
+          <tr bgcolor="#D1E68D">
             <td><a href="outlets/{{o.id}}" >{{ o.outletName }}</a></td>
+            <td>On</td>
             <td>
-              {% if o.state %}
-                On
-              {% else %}
-                Off
-              {% endif %}
-            </td>
-            <td>
-              {% if o.state %}
-                <a href="outlets/{{o.id}}/flip/0">Turn Off</a>
-              {% else %}
-                <a href="outlets/{{o.id}}/flip/1">Turn On</a>
-              {% endif %}
+              <a href="outlets/{{o.id}}/flip/0">Turn Off</a>
               <a href="outlets/{{o.id}}/delete">Delete</a>
             </td>
           </tr>
+        {% else %}
+            <tr bgcolor="#FFBABA">
+            <td><a href="outlets/{{o.id}}" >{{ o.outletName }}</a></td>
+            <td>Off</td>
+            <td>
+              <a href="outlets/{{o.id}}/flip/1">Turn On</a>
+              <a href="outlets/{{o.id}}/delete">Delete</a>
+            </td>
+          </tr>
+        {% endif %}
       {% endfor %}
+    {% else %}
+        <tr bgcolor="#D1E68D">
+          <td colspan='3'><center>No outlets at this time</center></td>
+        </tr>
+    {% endif %}
     </tbody>
   </table>
-{% else %}
-    <p>You do not own any buildings at this time.</p>
-{% endif %}
-<br/>
-<a href="outlets/new">Register an Outlet</a>
+</div>
 {% endblock %}
