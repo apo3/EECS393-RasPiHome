@@ -27,8 +27,11 @@ def building(request, building_id):
 def outlet(request, building_id, outlet_id):
     building = get_object_or_404(Building, pk=building_id)
     outlet = get_object_or_404(Outlet, pk=outlet_id)
-    alarms = Alarm.objects.filter(outletID=outlet_id)
-    return render_to_response('outlet.html', {'building': building, 'outlet': outlet, 'alarms': alarms})
+    alarms = Alarm.objects.filter(outletID=outlet_id, startTime__isnull=True)
+    timers = Alarm.objects.filter(outletID=outlet_id, startTime__isnull=False)
+    print alarms
+    print timers
+    return render_to_response('outlet.html', {'building': building, 'outlet': outlet, 'alarms': alarms, 'timers': timers})
 
 @login_required
 def deleteAlarm(request, building_id, outlet_id, alarm_id):
@@ -40,7 +43,7 @@ def deleteAlarm(request, building_id, outlet_id, alarm_id):
     return HttpResponseRedirect(reverse('piServer.views.outlet', args=(building.id, outlet.id)))
 
 @login_required
-def new(request, building_id, outlet_id):
+def newAlarm(request, building_id, outlet_id):
     print 'Creating an alarm for outlet ' + outlet_id
     building = get_object_or_404(Building, pk=building_id)
     outlet = get_object_or_404(Outlet, pk=outlet_id)
@@ -48,7 +51,15 @@ def new(request, building_id, outlet_id):
                                context_instance=RequestContext(request))
 
 @login_required
-def createAlarm(request, building_id, outlet_id):
+def newTimer(request, building_id, outlet_id):
+    print 'Creating a timer for outlet ' + outlet_id
+    building = get_object_or_404(Building, pk=building_id)
+    outlet = get_object_or_404(Outlet, pk=outlet_id)
+    return render_to_response('newTimer.html', {'building': building, 'outlet': outlet},
+                               context_instance=RequestContext(request))
+
+@login_required
+def createTimer(request, building_id, outlet_id):
     building = get_object_or_404(Building, pk=building_id)
     outlet = get_object_or_404(Outlet, pk=outlet_id)
     name = request.POST['name']
@@ -59,6 +70,22 @@ def createAlarm(request, building_id, outlet_id):
                   outletID = outlet,
                   alarmName = name,
                   startTime = startTime,
+                  endTime = endTime,
+                  desiredState = True)
+    alarm.save()
+    return HttpResponseRedirect(reverse('piServer.views.outlet', args=(building.id, outlet.id)))
+
+@login_required
+def createAlarm(request, building_id, outlet_id):
+    building = get_object_or_404(Building, pk=building_id)
+    outlet = get_object_or_404(Outlet, pk=outlet_id)
+    name = request.POST['name']
+    endTime = request.POST['endtime']
+    alarm = Alarm(creator = request.user,
+                  buildingID = building,
+                  outletID = outlet,
+                  alarmName = name,
+                  startTime = None,
                   endTime = endTime,
                   desiredState = True)
     alarm.save()
