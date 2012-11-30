@@ -19,9 +19,38 @@ for building in buildings:
         owner = building[2]
         print ("Server is running for building ID: %s" ,owner)
 users = query.execute('SELECT * FROM piServer_userprofile WHERE user_id = %s' % owner)
+def checkOutlet():
+        count = 0
+	outlets = query.execute('SELECT * FROM piServer_outlet WHERE buildingID_id = %s' % bID)        
+        outletOneState = 0
+        outletTwoState = 0
+        outletThreeState = 0
+        string = ""
+        for outlet in outlets:
+                if outlet[0] == 1:
+                        outletOneState = outlet[3]
+                if outlet[1] == 2:
+                        outletTwoState = outlet[3]
+                if outlet[2] == 3:
+                        outletThreeState = outlet[3]
+                print outlet[3]
+        #if outletNewState == True:
+        #        outletNewStateInt = 1
+        #else:
+        #        outletNewStateInt = 0
+        #if oID == 1:
+        string = '"C:\Program Files\PowerUSB\PwrUsbCmd.exe" ' + str(outletOneState) + " " + str(outletTwoState) + " " + str(outletThreeState) 
+        #if oID == 2:
+        #        string = '"C:\Program Files\PowerUSB\PwrUsbCmd.exe" ' + str(outletOneState) + " " + str(outletTwoState) + " " + str(outletThreeState)
+        #if oID == 3:
+        #       string = '"C:\Program Files\PowerUSB\PwrUsbCmd.exe" ' + str(outletOneState) + " " + str(outletTwoState) + " " + str(outletThreeState)
+        #cmd = str(string)
+        #print cmd
+        print string
+        os.system(string)
 def flipState(oID):
         count = 0
-	outlet1 = query.execute('SELECT * FROM piServer_outlet WHERE buildingID_id = %s' % oID)
+	outlet1 = query.execute('SELECT * FROM piServer_outlet WHERE buildingID_id = %s' % bID)
         for outlet in outlet1:
                 count = count + 1
                 print "Hey"
@@ -30,11 +59,12 @@ def flipState(oID):
                         print state
         #print "DATA %s" % data
         
-	outletNewState = state
+	outletNewState = not state
+	print state
 	outlets = query.execute('SELECT * FROM piServer_outlet WHERE buildingID_id = %s' % bID)
 	query.execute('UPDATE piServer_outlet SET state = ? WHERE id = ?',(outletNewState,oID))
         createDB.commit()
-        outletOneState = 2
+        outletOneState = 0
         outletTwoState = 0
         outletThreeState = 0
         string = ""
@@ -45,8 +75,13 @@ def flipState(oID):
                         outletTwoState = outlet[3]
                 if outlet[2]:
                         outletThreeState = outlet[3]
+        print outletNewState
+        if outletNewState == True:
+                outletNewStateInt = 1
+        else:
+                outletNewStateInt = 0
         if oID == 1:
-                string = '"C:\Program Files\PowerUSB\PwrUsbCmd.exe" 1 ' + str(outletTwoState) + " " + str(outletThreeState) 
+                string = '"C:\Program Files\PowerUSB\PwrUsbCmd.exe" ' + str(outletNewStateInt) + " " + str(outletTwoState) + " " + str(outletThreeState) 
         if oID == 2:
                 string = '"C:\Program Files\PowerUSB\PwrUsbCmd.exe" ' + outletOneState + " 1 " + outletThreeState
         if oID == 3:
@@ -64,15 +99,15 @@ def checkAlarms():
                 startTime = alarm[5]
                 print "Checked an Alarm %s",startTime
 		if startTime == None:
-			checkTimer(alarm)
-		else:
 			checkAlarm(alarm)
+		else:
+			checkTimer(alarm)
 def checkOutlets():
         outlets = query.execute('SELECT * FROM piServer_outlet')
-        string = "C:\Program Files\PowerUSB\PwrUsbCmd.exe "
+        string = '"C:\Program Files\PowerUSB\PwrUsbCmd.exe" '
         count = 0
         for outlet in outlets:
-                outletState = outlet
+                outletState = outlet[3]
                 count = count + 1
                 if outletState == True:
                         stringAdd = "1"
@@ -81,18 +116,24 @@ def checkOutlets():
                 string = string + stringAdd
                 if count < 3:
                         string = string + " "
+        print "HEYYYYY    " + string
         os.system(string)
 def checkTimer(timer):
-	if datetime.datetime.now() >= timer.endTime:
+	if datetime.strptime(time, '%Y-%m-%d %H:%M:%S'):
 		flipState(timer.outletID)
 		#logTimer(timer.pk)
 		#timer.delete()
 def checkAlarm(alarm):
         #print alarm[6]
-        now = datetime.now()
+        now = datetime.utcnow()
         time = alarm[6]
-        #print now
+        print "in checkAlarm"
+        print time
+        
+        #now = strptime(gmtime(),'%Y-%m-%d %H:%M:%S')
+        print now
 	if now >= datetime.strptime(time, '%Y-%m-%d %H:%M:%S'):
+                print "in the IF"
                 oID = alarm[3]
                 int(oID)
                 print oID
