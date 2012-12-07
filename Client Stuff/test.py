@@ -1,3 +1,6 @@
+#NOTE THIS FILE IS NOT USED IN THE PROJECT.
+#IT WAS FOR TESTING HOW TO USE PARTICULAR SYNTAX OF SQLITE
+#DO NOT USE THIS IN IMPORTS.
 import sqlite3
 
 createDB = sqlite3.connect("myDatabase")
@@ -23,3 +26,6 @@ oID = 1
 outlets = query.execute('SELECT * FROM piServer_outlet WHERE id = %s' % oID)
 data = query.fetchall()
 print "OUTLETS: %s" % data
+
+query.execute('UPDATE piServer_building SET onlineState = ? WHERE id = ?',(True,1))
+createDB.commit()

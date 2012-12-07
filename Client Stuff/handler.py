@@ -1,4 +1,5 @@
-
+#The Handler will be responsible for taking care of changes in the database
+#when an outlets state is modified from an alarm.
 from datetime import datetime
 import Logger
 import sys
@@ -7,6 +8,7 @@ import sqlite3
 import os
 from time import gmtime, strftime
 
+#Import and create a connection to the databae.
 createDB = sqlite3.connect("myDatabase")
 
 query = createDB.cursor()
@@ -19,6 +21,9 @@ for building in buildings:
         owner = building[2]
         print ("Server is running for building ID: %s" ,owner)
 users = query.execute('SELECT * FROM piServer_userprofile WHERE user_id = %s' % owner)
+
+#This function is for checking the state of an outlet
+#It is used so useless calls to the DB will not called.
 def checkOutlet():
         count = 0
 	outlets = query.execute('SELECT * FROM piServer_outlet WHERE buildingID_id = %s' % bID)        
@@ -34,7 +39,7 @@ def checkOutlet():
                 if outlet[2] == 3:
                         outletThreeState = outlet[3]
                 print outlet[3]
-        #if outletNewState == True:
+        #if outletNewState == True: ALL CODE COMMENTED OUT IS LEFT IN TO REFERENCE FOR FUTURE CHANGES
         #        outletNewStateInt = 1
         #else:
         #        outletNewStateInt = 0
@@ -47,7 +52,10 @@ def checkOutlet():
         #cmd = str(string)
         #print cmd
         print string
+        #Make the CMD call to change the hardware state.
         os.system(string)
+#Flip State is used by checkAlarm and checkTimer
+#to make sure a state is changed when the alarm/timer is completed.
 def flipState(oID):
         count = 0
 	outlet1 = query.execute('SELECT * FROM piServer_outlet WHERE buildingID_id = %s' % bID)
@@ -89,11 +97,14 @@ def flipState(oID):
         #cmd = str(string)
         #print cmd
         print string
+        #Make the CMD call to change the hardware.
         os.system(string)
 	#log(user.lastAddress, user.username, "".join(["Outlet ", outlet.outletName, " was switched from ", "off" if outlet.state else "on", " to ", "on" if outlet.state else "off"]), 0)
 	#else
 	#log(user.lastAddress, user.username, "".join(["Outlet ", outlet.outletName, " was not switched due to a hardware error"]), 1)
 def checkAlarms():
+        #This function checks the ALARMS table in the DB
+        #This will then call the correct function to handle the timer or alarm.
         alarms = query.execute('SELECT * FROM piServer_alarm WHERE buildingID_id = %s' % bID)
 	for alarm in alarms:
                 startTime = alarm[5]
@@ -103,6 +114,7 @@ def checkAlarms():
 		else:
 			checkTimer(alarm)
 def checkOutlets():
+        #This is for updating an outlets state if it has changed by user input
         outlets = query.execute('SELECT * FROM piServer_outlet')
         string = '"C:\Program Files\PowerUSB\PwrUsbCmd.exe" '
         count = 0
@@ -116,14 +128,17 @@ def checkOutlets():
                 string = string + stringAdd
                 if count < 3:
                         string = string + " "
-        print "HEYYYYY    " + string
+        print "This is the input String: "+ string
+        #Make the call to change the hardware to match the DB
         os.system(string)
 def checkTimer(timer):
+        #Checks if its time for an outlet to change based on a Timer.
 	if datetime.strptime(time, '%Y-%m-%d %H:%M:%S'):
 		flipState(timer.outletID)
 		#logTimer(timer.pk)
-		#timer.delete()
 def checkAlarm(alarm):
+        #Check an alarm and compares the time to now then changes state if needed
+        aID = alarm[0]
         #print alarm[6]
         now = datetime.utcnow()
         time = alarm[6]
@@ -142,11 +157,13 @@ def checkAlarm(alarm):
                         state = outlet[3]
                         if state is not alarm[7]:
                                 flipState(oID)
+                query.execute('DELETE FROM piServer_alarm WHERE id = %s' % aID)
+                createDB.commit()
                                 #logAlarm(alarm[0], true)
                         #else:
                                 #logAlarm(alarm[0], false)
-		#alarm.delete()
-def killServer():
+#Kill server is now handled elsewhere.
+#def killServer():
         #buildings = query.execute('SELECT * FROM piServer_building WHERE id = ?',bID)
         #for building in buildings:
                 #if building["onlineState"] is False:

@@ -13,9 +13,11 @@ import sqlite3
 createDB = sqlite3.connect("myDatabase")
 
 query = createDB.cursor()
-#location will just be directly on the Pi when we can do that.
+#location needs to be changed to the correct location based on the machine.
+#Below is an example location which is our test machines saved location.
 bID = 1
 location = 'C:\\Users\\Cimara\\Documents\\GitHub\\EECS393-RasPiHome\\Client Stuff\\test.txt' #this is the location I currently am using
+#Logs the Alarm in the test.txt file
 def logAlarm(aID, wasFlipped):
     a = query.execute('SELECT alarm FROM piServer_alarm WHERE id = ?', aID)
     f = open(location, "a")
@@ -25,6 +27,7 @@ def logAlarm(aID, wasFlipped):
     f.write(" ")
     f.write(wasFlipped)
     f.close()
+#Logs the Timer in the test.txt file
 def logTimer(aID):
     a = query.execute('SELECT alarm FROM piServer_alarm WHERE id = ?', aID)
     f = open(location, "a")
@@ -32,6 +35,7 @@ def logTimer(aID):
     f.write(timeStamp)
     f.write(a)
     f.close()
+#Log any event a programmer deems needed to be reported with an information flag
 def log(address,user,msg,flag):
     f = open(location, "a")
     if flag == 0:
@@ -55,13 +59,12 @@ def inputInvalid(msg):
     f.write("The following input was invalid")
     f.write(msg)
     f.close()
+#Logs a Server shut down command.    
 def killServer(address, user,msg,flag):
     self.log(address,user,msg,flag)
     sys.exit("The Website Server was killed remotely")
-        #change server status to Down or OFF
-        #serverstatus flag in a file??? or the DB?
+#change server status to Down or OFF serverstatus flag in a file??? or the D)
 def checkServerStatus():
-        #check if the status is Down or OFF
     if server == 0:
         sys.exit("The Website Client Server is off... Shutting down")            
         
