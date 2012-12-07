@@ -1,9 +1,11 @@
 from django.conf.urls import patterns, url
+from django.contrib.auth.views import login
+from django.views.decorators.csrf import csrf_exempt
 from piServer import views
 
 urlpatterns = patterns('',
     url(r'^$', views.index, name='index'),
-    (r'^login/$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}),
+    (r'^login/$', csrf_exempt(login), {'template_name': 'login.html'}, "login"),
     url(r'^logout/$', views.logout_view),
     url(r'^account/new/$', views.newAccount),
     url(r'^account/new/create/$', views.createAccount),

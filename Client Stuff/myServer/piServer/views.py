@@ -10,7 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 def logout_view(request):
     logout(request)
-    return HttpResponseRedirect(reverse('django.contrib.auth.views.login', args=''))
+    return HttpResponseRedirect(reverse('login', args=''))
 
 @login_required
 def index(request):
